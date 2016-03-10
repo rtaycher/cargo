@@ -115,6 +115,7 @@ impl<'cfg> Compilation<'cfg> {
            .env("CARGO_PKG_VERSION_PATCH", &pkg.version().patch.to_string())
            .env("CARGO_PKG_VERSION_PRE", &pre_version_component(pkg.version()))
            .env("CARGO_PKG_VERSION", &pkg.version().to_string())
+           .env("CARGO_PKG_AUTHORS", &pkg.authors().join(", "))
            .cwd(pkg.root());
         Ok(cmd)
     }
