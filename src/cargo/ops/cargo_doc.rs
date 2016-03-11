@@ -70,44 +70,73 @@ pub fn doc(manifest_path: &Path,
 fn open_docs(path: &Path) -> Result<(), ()> {
     // trying $BROWSER
     match env::var("BROWSER").map(|name| Command::new(name).arg(path).status()) {
-        Ok(_) => return Ok(()),
-        Err(_) => ()
+        Ok(Ok(exit_status)) => {
+            match exit_status.code() {
+                Some(0) => return Ok(()),
+                _ => (),
+            }
+        }
+        _ => ()
     }
 
     // trying xdg-open
     match Command::new("xdg-open").arg(path).status() {
-        Ok(_) => return Ok(()),
-        Err(_) => ()
+        Ok(exit_status) => {
+            match exit_status.code() {
+                Some(0) => return Ok(()),
+                _ => (),
+            }
+        }
+        _ => ()
     };
 
     // trying gnome-open
     match Command::new("gnome-open").arg(path).status() {
-        Ok(_) => return Ok(()),
-        Err(_) => ()
+        Ok(exit_status) => {
+            match exit_status.code() {
+                Some(0) => return Ok(()),
+                _ => (),
+            }
+        }
+        _ => ()
     };
 
     // trying kde-open
     match Command::new("kde-open").arg(path).status() {
-        Ok(_) => return Ok(()),
-        Err(_) => ()
+        Ok(exit_status) => {
+            match exit_status.code() {
+                Some(0) => return Ok(()),
+                _ => (),
+            }
+        }
+        _ => ()
     };
+    
     Err(())
 }
 
 #[cfg(target_os = "windows")]
 fn open_docs(path: &Path) -> Result<(), ()> {
     match Command::new("cmd").arg("/C").arg("start").arg("").arg(path).status() {
-        Ok(_) => return Ok(()),
-        Err(_) => ()
-    };
-    Err(())
+        Ok(exit_status) => {
+            match exit_status.code() {
+                Some(0) => return Ok(()),
+                _ => Err(()),
+            }
+        }
+        _ => Err(())
+    }
 }
 
 #[cfg(target_os = "macos")]
 fn open_docs(path: &Path) -> Result<(), ()> {
     match Command::new("open").arg(path).status() {
-        Ok(_) => return Ok(()),
-        Err(_) => ()
-    };
-    Err(())
+        Ok(exit_status) => {
+            match exit_status.code() {
+                Some(0) => return Ok(()),
+                _ => Err(()),
+            }
+        }
+        _ => Err(())
+    }
 }
